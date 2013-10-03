@@ -10,8 +10,7 @@ class ItemEditLockPlugin extends Omeka_Plugin_AbstractPlugin
 {
     protected $_hooks = array(  "initialize",
                                 "install",
-                                "uninstall",
-                                "after_save_item");
+                                "uninstall");
 
     protected $_filters = array('admin_items_form_tabs');
 
@@ -64,9 +63,11 @@ class ItemEditLockPlugin extends Omeka_Plugin_AbstractPlugin
             return array("" => "<div style='height:130px; width:80%; border=3px; background-color: red; z-index:2000; position: absolute;'><center><H2><br><br>Item is being edited by someone else. Please try again later</H2></center>  </div>");
         }
         else{
-            $locked = new ItemEditLock;
-            $locked->item_id = $item->id;
-            $locked->save();
+            if ($item->id){
+                $locked = new ItemEditLock;
+                $locked->item_id = $item->id;
+                $locked->save();
+            }
         }
         return $tabs;
     }

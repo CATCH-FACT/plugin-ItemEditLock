@@ -15,15 +15,25 @@ class Table_ItemEditLock extends Omeka_Db_Table
 {
 
     public function isLocked($item){
-#        $record = $item['record'];
         $recordId = $item->id;
-        return $this->findByRecordId($recordId) ? True : False;
+        if ($recordId){
+            return $this->findByRecordId($recordId) ? True : False;
+        }
+        else{
+            return False;
+        }
     }
     
     public function isLockedByMe($item){
-#        $record = $item['item'];
         $recordId = $item->id;
-        return $this->findByRecordIdAndCurrentUser($recordId) ? True : False;
+        if ($recordId){
+            $recordId = $item->id;
+            return $this->findByRecordIdAndCurrentUser($recordId) ? True : False;
+        }
+        else{
+            return False;
+        }
+
     }
 
     /**
@@ -56,8 +66,10 @@ class Table_ItemEditLock extends Omeka_Db_Table
     
     public function findByRecordId($recordId)
     {
-        $select = $this->getSelect()->where('item_id = ?', $recordId);
-        return $this->fetchObject($select);
+        $select = $this->getSelect();
+        $select->where("item_id = ?");
+        $select->limit(1);
+        return $this->fetchObject($select, array($recordId));
     }
 
 }
